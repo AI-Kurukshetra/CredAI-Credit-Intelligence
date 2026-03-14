@@ -9,7 +9,7 @@ interface StatusBadgeProps {
 }
 
 const styles: Record<StatusBadgeProps["tone"], string> = {
-  submitted: "bg-slate-100 text-slate-700",
+  submitted: "bg-white text-slate-700",
   scored: "bg-blue-100 text-blue-700",
   review: "bg-amber-100 text-amber-800",
   approved: "bg-emerald-100 text-emerald-800",

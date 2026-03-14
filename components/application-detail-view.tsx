@@ -93,23 +93,36 @@ export function ApplicationDetailView({ id }: { id: string }) {
       {detail ? (
         <div className="grid gap-8 xl:grid-cols-[1.15fr_0.85fr]">
           <section className="space-y-8">
-            <article className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+            <article className="rounded-[32px] border border-sky-100 bg-white p-8 shadow-[var(--shadow)]">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-sm uppercase tracking-[0.16em] text-slate-500">
+                  <p className="text-sm uppercase tracking-[0.16em] text-slate-400">
                     Borrower
                   </p>
                   <h2 className="mt-2 text-3xl font-semibold text-slate-950">
                     {detail.borrower.firstName} {detail.borrower.lastName}
                   </h2>
-                  <p className="mt-2 text-sm text-slate-600">{detail.borrower.email}</p>
-                  <p className="text-sm text-slate-600">{detail.borrower.phone}</p>
+                  <p className="mt-2 text-sm text-slate-500">{detail.borrower.email}</p>
+                  <p className="text-sm text-slate-500">{detail.borrower.phone}</p>
+                  <p className="text-sm text-slate-500">
+                    DOB: {detail.borrower.dateOfBirth || "Not captured"}
+                  </p>
+                  <p className="mt-2 text-sm text-slate-500">
+                    {detail.borrower.addressLine1}
+                    {detail.borrower.addressLine2
+                      ? `, ${detail.borrower.addressLine2}`
+                      : ""}
+                    , {detail.borrower.city}, {detail.borrower.state} {detail.borrower.postalCode}
+                  </p>
                 </div>
                 <StatusBadge tone={detail.applicationStatus} />
               </div>
 
               <div className="mt-8 grid gap-4 md:grid-cols-2">
                 <DataPoint label="Requested amount" value={currency.format(detail.requestedAmount)} />
+                <DataPoint label="Loan purpose" value={detail.loanPurpose} />
+                <DataPoint label="Product type" value={detail.productType} />
+                <DataPoint label="Loan term" value={`${detail.loanTermMonths} months`} />
                 <DataPoint label="Annual income" value={currency.format(detail.annualIncome)} />
                 <DataPoint label="Monthly debt" value={currency.format(detail.existingMonthlyDebt)} />
                 <DataPoint label="Housing payment" value={currency.format(detail.monthlyHousingPayment)} />
@@ -118,8 +131,22 @@ export function ApplicationDetailView({ id }: { id: string }) {
               </div>
             </article>
 
-            <article className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
-              <p className="text-sm uppercase tracking-[0.16em] text-slate-500">
+            <article className="rounded-[32px] border border-sky-100 bg-white p-8 shadow-[var(--shadow)]">
+              <p className="text-sm uppercase tracking-[0.16em] text-slate-400">
+                Employment and income
+              </p>
+              <div className="mt-6 grid gap-4 md:grid-cols-2">
+                <DataPoint label="Employer name" value={detail.employerName} />
+                <DataPoint label="Employment type" value={detail.employmentType} />
+                <DataPoint label="Job title" value={detail.jobTitle} />
+                <DataPoint label="Pay frequency" value={detail.payFrequency} />
+                <DataPoint label="Monthly net income" value={currency.format(detail.monthlyNetIncome)} />
+                <DataPoint label="Secondary income" value={currency.format(detail.secondaryIncome)} />
+              </div>
+            </article>
+
+            <article className="rounded-[32px] border border-sky-100 bg-white p-8 shadow-[var(--shadow)]">
+              <p className="text-sm uppercase tracking-[0.16em] text-slate-400">
                 Alternative data
               </p>
               <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -132,20 +159,20 @@ export function ApplicationDetailView({ id }: { id: string }) {
               </div>
             </article>
 
-            <article className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
-              <p className="text-sm uppercase tracking-[0.16em] text-slate-500">
+            <article className="rounded-[32px] border border-sky-100 bg-white p-8 shadow-[var(--shadow)]">
+              <p className="text-sm uppercase tracking-[0.16em] text-slate-400">
                 Application timeline
               </p>
               <div className="mt-6 space-y-4">
                 {detail.timeline.map((item) => (
-                  <div className="rounded-[24px] bg-slate-50 p-5" key={item.id}>
+                  <div className="rounded-[24px] bg-[linear-gradient(180deg,#ffffff_0%,#f9fcff_100%)] p-5" key={item.id}>
                     <div className="flex items-center justify-between gap-4">
                       <p className="font-semibold text-slate-950">{item.label}</p>
-                      <p className="text-sm text-slate-500">
+                      <p className="text-sm text-slate-400">
                         {new Date(item.createdAt).toLocaleString()}
                       </p>
                     </div>
-                    <p className="mt-2 text-sm text-slate-600">{item.detail}</p>
+                    <p className="mt-2 text-sm text-slate-500">{item.detail}</p>
                     {item.actorName ? (
                       <p className="mt-2 text-xs uppercase tracking-[0.14em] text-slate-400">
                         {item.actorName}
@@ -156,25 +183,25 @@ export function ApplicationDetailView({ id }: { id: string }) {
               </div>
             </article>
 
-            <article className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
-              <p className="text-sm uppercase tracking-[0.16em] text-slate-500">
+            <article className="rounded-[32px] border border-sky-100 bg-white p-8 shadow-[var(--shadow)]">
+              <p className="text-sm uppercase tracking-[0.16em] text-slate-400">
                 Supporting documents
               </p>
               <div className="mt-6 grid gap-4">
                 {detail.documents.length > 0 ? (
                   detail.documents.map((document) => (
                     <div
-                      className="flex flex-col gap-3 rounded-[24px] border border-slate-200 p-5 md:flex-row md:items-center md:justify-between"
+                      className="flex flex-col gap-3 rounded-[24px] border border-sky-100 p-5 md:flex-row md:items-center md:justify-between"
                       key={document.id}
                     >
                       <div>
                         <p className="font-semibold text-slate-950">
                           {document.originalName}
                         </p>
-                        <p className="mt-1 text-sm text-slate-500">
+                        <p className="mt-1 text-sm text-slate-400">
                           {document.mimeType} · {formatBytes(document.sizeBytes)}
                         </p>
-                        <p className="mt-1 text-sm text-slate-500">
+                        <p className="mt-1 text-sm text-slate-400">
                           Uploaded {new Date(document.uploadedAt).toLocaleString()}
                         </p>
                       </div>
@@ -191,7 +218,7 @@ export function ApplicationDetailView({ id }: { id: string }) {
                     </div>
                   ))
                 ) : (
-                  <div className="rounded-[24px] border border-dashed border-slate-300 p-5 text-sm text-slate-500">
+                  <div className="rounded-[24px] border border-dashed border-sky-100 p-5 text-sm text-slate-400">
                     No documents uploaded for this application.
                   </div>
                 )}
@@ -200,7 +227,7 @@ export function ApplicationDetailView({ id }: { id: string }) {
           </section>
 
           <aside className="space-y-8">
-            <article className="rounded-[32px] border border-slate-200 bg-slate-950 p-8 text-slate-50 shadow-[0_20px_60px_rgba(15,23,42,0.18)]">
+            <article className="rounded-[32px] border border-slate-900/20 bg-[linear-gradient(180deg,#020617_0%,#020817_100%)] p-8 text-slate-50 shadow-[0_28px_70px_rgba(2,6,23,0.24)]">
               <p className="text-sm uppercase tracking-[0.16em] text-slate-400">
                 Model result
               </p>
@@ -240,21 +267,21 @@ export function ApplicationDetailView({ id }: { id: string }) {
               )}
             </article>
 
-            <article className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
-              <p className="text-sm uppercase tracking-[0.16em] text-slate-500">
+            <article className="rounded-[32px] border border-sky-100 bg-white p-8 shadow-[var(--shadow)]">
+              <p className="text-sm uppercase tracking-[0.16em] text-slate-400">
                 Decision
               </p>
               {detail.latestDecision ? (
                 <div className="mt-4 space-y-3">
                   <StatusBadge tone={detail.latestDecision.action} />
-                  <p className="text-sm text-slate-700">{detail.latestDecision.notes}</p>
+                  <p className="text-sm text-slate-600">{detail.latestDecision.notes}</p>
                   <p className="text-xs uppercase tracking-[0.14em] text-slate-400">
                     {detail.latestDecision.reviewerName} ·{" "}
                     {new Date(detail.latestDecision.decidedAt).toLocaleString()}
                   </p>
                 </div>
               ) : (
-                <p className="mt-4 text-sm text-slate-600">
+                <p className="mt-4 text-sm text-slate-500">
                   No manual underwriter decision has been recorded yet.
                 </p>
               )}
@@ -281,12 +308,12 @@ export function ApplicationDetailView({ id }: { id: string }) {
               </div>
 
               {profile?.role === "lender" ? (
-                <div className="mt-8 space-y-4 rounded-[24px] bg-slate-50 p-5">
+                <div className="mt-8 space-y-4 rounded-[24px] bg-[linear-gradient(180deg,#ffffff_0%,#f9fcff_100%)] p-5">
                   <p className="text-sm font-semibold text-slate-900">
                     Underwriter review actions
                   </p>
                   <textarea
-                    className="min-h-28 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-slate-950"
+                    className="min-h-28 w-full rounded-2xl border border-sky-100 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-sky-300"
                     onChange={(event) => setNotes(event.target.value)}
                     placeholder="Add decision notes or request details..."
                     value={notes}
@@ -314,7 +341,7 @@ export function ApplicationDetailView({ id }: { id: string }) {
           </aside>
         </div>
       ) : (
-        <div className="rounded-[32px] border border-slate-200 bg-white p-6 text-sm text-slate-600 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+        <div className="rounded-[32px] border border-sky-100 bg-white p-6 text-sm text-slate-500 shadow-[var(--shadow)]">
           Loading application detail...
         </div>
       )}
@@ -324,8 +351,8 @@ export function ApplicationDetailView({ id }: { id: string }) {
 
 function DataPoint({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl bg-slate-50 px-4 py-4">
-      <p className="text-xs uppercase tracking-[0.14em] text-slate-500">{label}</p>
+    <div className="rounded-2xl bg-[linear-gradient(180deg,#ffffff_0%,#f9fcff_100%)] px-4 py-4">
+      <p className="text-xs uppercase tracking-[0.14em] text-slate-400">{label}</p>
       <p className="mt-2 text-sm font-medium text-slate-900">{value}</p>
     </div>
   );

@@ -9,6 +9,19 @@ function isValidInput(payload: LoanApplicationInput) {
     payload.borrower.firstName.trim().length > 0 &&
     payload.borrower.lastName.trim().length > 0 &&
     payload.borrower.email.trim().length > 0 &&
+    payload.borrower.dateOfBirth.trim().length > 0 &&
+    payload.borrower.addressLine1.trim().length > 0 &&
+    payload.borrower.city.trim().length > 0 &&
+    payload.borrower.state.trim().length > 0 &&
+    payload.borrower.postalCode.trim().length > 0 &&
+    payload.loanPurpose.trim().length > 0 &&
+    payload.productType.trim().length > 0 &&
+    payload.loanTermMonths > 0 &&
+    payload.employerName.trim().length > 0 &&
+    payload.employmentType.trim().length > 0 &&
+    payload.jobTitle.trim().length > 0 &&
+    payload.monthlyNetIncome > 0 &&
+    payload.payFrequency.trim().length > 0 &&
     payload.agreedToTerms
   );
 }

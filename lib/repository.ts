@@ -31,6 +31,24 @@ function requireAdminClient() {
   return supabase;
 }
 
+function formatSupabaseMutationError(message?: string) {
+  if (!message) {
+    return "Unknown database error.";
+  }
+
+  const missingColumnMatch = message.match(
+    /Could not find the '([^']+)' column of '([^']+)' in the schema cache/i,
+  );
+
+  if (missingColumnMatch) {
+    const [, columnName, tableName] = missingColumnMatch;
+
+    return `Database schema is outdated. Run the latest Supabase migration or SQL delta for table "${tableName}". Missing column: "${columnName}".`;
+  }
+
+  return message;
+}
+
 function mapStatusFromRecommendation(
   recommendation: Recommendation,
 ): ApplicationStatus {
@@ -258,6 +276,12 @@ export async function submitApplication(
         first_name: payload.borrower.firstName,
         last_name: payload.borrower.lastName,
         phone: payload.borrower.phone,
+        date_of_birth: payload.borrower.dateOfBirth,
+        address_line_1: payload.borrower.addressLine1,
+        address_line_2: payload.borrower.addressLine2,
+        city: payload.borrower.city,
+        state: payload.borrower.state,
+        postal_code: payload.borrower.postalCode,
         consent_captured: payload.agreedToTerms,
       },
       { onConflict: "profile_id" },
@@ -266,7 +290,11 @@ export async function submitApplication(
     .single();
 
   if (borrowerError || !borrower) {
-    throw new Error(`Failed to upsert borrower record: ${borrowerError?.message}`);
+    throw new Error(
+      `Failed to upsert borrower record: ${formatSupabaseMutationError(
+        borrowerError?.message,
+      )}`,
+    );
   }
 
   const { data: application, error: applicationError } = await supabase
@@ -274,7 +302,16 @@ export async function submitApplication(
     .insert({
       borrower_id: borrower.id,
       requested_amount: payload.requestedAmount,
+      loan_purpose: payload.loanPurpose,
+      loan_term_months: payload.loanTermMonths,
+      product_type: payload.productType,
+      employer_name: payload.employerName,
+      employment_type: payload.employmentType,
+      job_title: payload.jobTitle,
       annual_income: payload.annualIncome,
+      monthly_net_income: payload.monthlyNetIncome,
+      secondary_income: payload.secondaryIncome,
+      pay_frequency: payload.payFrequency,
       existing_monthly_debt: payload.existingMonthlyDebt,
       monthly_housing_payment: payload.monthlyHousingPayment,
       employment_years: payload.employmentYears,
@@ -285,7 +322,9 @@ export async function submitApplication(
 
   if (applicationError || !application) {
     throw new Error(
-      `Failed to insert loan application: ${applicationError?.message}`,
+      `Failed to insert loan application: ${formatSupabaseMutationError(
+        applicationError?.message,
+      )}`,
     );
   }
 
@@ -303,7 +342,9 @@ export async function submitApplication(
 
   if (alternativeDataError) {
     throw new Error(
-      `Failed to insert alternative-data record: ${alternativeDataError.message}`,
+      `Failed to insert alternative-data record: ${formatSupabaseMutationError(
+        alternativeDataError.message,
+      )}`,
     );
   }
 
@@ -345,7 +386,11 @@ export async function submitApplication(
     .single();
 
   if (scoringError || !scoringRun) {
-    throw new Error(`Failed to insert scoring run: ${scoringError?.message}`);
+    throw new Error(
+      `Failed to insert scoring run: ${formatSupabaseMutationError(
+        scoringError?.message,
+      )}`,
+    );
   }
 
   const finalStatus = mapStatusFromRecommendation(scoring.recommendation);
@@ -368,6 +413,8 @@ export async function submitApplication(
       event_type: "application_submitted",
       event_payload: {
         requestedAmount: payload.requestedAmount,
+        loanPurpose: payload.loanPurpose,
+        loanTermMonths: payload.loanTermMonths,
         consentCaptured: payload.agreedToTerms,
       },
     },
@@ -395,7 +442,11 @@ export async function submitApplication(
   const { error: auditError } = await supabase.from("audit_logs").insert(auditPayload);
 
   if (auditError) {
-    throw new Error(`Failed to write audit logs: ${auditError.message}`);
+    throw new Error(
+      `Failed to write audit logs: ${formatSupabaseMutationError(
+        auditError.message,
+      )}`,
+    );
   }
 
   return {
@@ -468,7 +519,16 @@ export async function getApplicationDetail(
         application_status,
         submitted_at,
         requested_amount,
+        loan_purpose,
+        loan_term_months,
+        product_type,
+        employer_name,
+        employment_type,
+        job_title,
         annual_income,
+        monthly_net_income,
+        secondary_income,
+        pay_frequency,
         existing_monthly_debt,
         monthly_housing_payment,
         employment_years,
@@ -476,7 +536,13 @@ export async function getApplicationDetail(
           email,
           first_name,
           last_name,
-          phone
+          phone,
+          date_of_birth,
+          address_line_1,
+          address_line_2,
+          city,
+          state,
+          postal_code
         ),
         alternative_data_inputs (
           income_consistency_score,
@@ -593,9 +659,24 @@ export async function getApplicationDetail(
       lastName: borrower.last_name,
       email: borrower.email,
       phone: borrower.phone ?? "",
+      dateOfBirth: borrower.date_of_birth ?? "",
+      addressLine1: borrower.address_line_1 ?? "",
+      addressLine2: borrower.address_line_2 ?? "",
+      city: borrower.city ?? "",
+      state: borrower.state ?? "",
+      postalCode: borrower.postal_code ?? "",
     },
     requestedAmount: Number(application.requested_amount),
+    loanPurpose: application.loan_purpose ?? "",
+    loanTermMonths: Number(application.loan_term_months ?? 0),
+    productType: application.product_type ?? "",
+    employerName: application.employer_name ?? "",
+    employmentType: application.employment_type ?? "",
+    jobTitle: application.job_title ?? "",
     annualIncome: Number(application.annual_income),
+    monthlyNetIncome: Number(application.monthly_net_income ?? 0),
+    secondaryIncome: Number(application.secondary_income ?? 0),
+    payFrequency: application.pay_frequency ?? "",
     existingMonthlyDebt: Number(application.existing_monthly_debt),
     monthlyHousingPayment: Number(application.monthly_housing_payment),
     employmentYears: Number(application.employment_years),

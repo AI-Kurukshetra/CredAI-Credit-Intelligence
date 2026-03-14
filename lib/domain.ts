@@ -14,12 +14,27 @@ export interface BorrowerProfileInput {
   lastName: string;
   email: string;
   phone: string;
+  dateOfBirth: string;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  state: string;
+  postalCode: string;
 }
 
 export interface LoanApplicationInput {
   borrower: BorrowerProfileInput;
   requestedAmount: number;
+  loanPurpose: string;
+  loanTermMonths: number;
+  productType: string;
+  employerName: string;
+  employmentType: string;
+  jobTitle: string;
   annualIncome: number;
+  monthlyNetIncome: number;
+  secondaryIncome: number;
+  payFrequency: string;
   existingMonthlyDebt: number;
   monthlyHousingPayment: number;
   employmentYears: number;
@@ -115,7 +130,16 @@ export interface ApplicationDetail {
   id: string;
   borrower: BorrowerProfileInput;
   requestedAmount: number;
+  loanPurpose: string;
+  loanTermMonths: number;
+  productType: string;
+  employerName: string;
+  employmentType: string;
+  jobTitle: string;
   annualIncome: number;
+  monthlyNetIncome: number;
+  secondaryIncome: number;
+  payFrequency: string;
   existingMonthlyDebt: number;
   monthlyHousingPayment: number;
   employmentYears: number;

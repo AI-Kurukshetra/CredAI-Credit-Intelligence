@@ -61,10 +61,10 @@ export function LenderDashboard() {
             ))}
           </section>
 
-          <section className="mt-8 rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+          <section className="mt-8 rounded-[32px] border border-sky-100 bg-white p-8 shadow-[var(--shadow)]">
             <div>
               <div>
-                <p className="text-sm uppercase tracking-[0.16em] text-slate-500">
+                <p className="text-sm uppercase tracking-[0.16em] text-slate-400">
                   Underwriting queue
                 </p>
                 <h2 className="mt-2 text-3xl font-semibold text-slate-950">
@@ -73,10 +73,11 @@ export function LenderDashboard() {
               </div>
             </div>
 
-            <div className="mt-8 overflow-hidden rounded-[28px] border border-slate-200">
-              <table className="min-w-full divide-y divide-slate-200">
-                <thead className="bg-slate-50">
-                  <tr className="text-left text-xs uppercase tracking-[0.18em] text-slate-500">
+            <div className="mt-8 overflow-hidden rounded-[28px] border border-sky-100">
+              <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-sky-100">
+                <thead className="bg-white">
+                  <tr className="text-left text-xs uppercase tracking-[0.18em] text-slate-400">
                     <th className="px-5 py-4">Borrower</th>
                     <th className="px-5 py-4">Request</th>
                     <th className="px-5 py-4">Score</th>
@@ -84,7 +85,7 @@ export function LenderDashboard() {
                     <th className="px-5 py-4">Model</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200 bg-white">
+                <tbody className="divide-y divide-sky-100 bg-white">
                   {snapshot.queue.map((application) => (
                     <tr key={application.id}>
                       <td className="px-5 py-5 align-top">
@@ -98,7 +99,7 @@ export function LenderDashboard() {
                           <p className="mt-1 text-sm text-slate-500">{application.email}</p>
                         </Link>
                       </td>
-                      <td className="px-5 py-5 align-top text-sm text-slate-700">
+                      <td className="px-5 py-5 align-top text-sm text-slate-600">
                         {currency.format(application.requestedAmount)}
                       </td>
                       <td className="px-5 py-5 align-top">
@@ -111,22 +112,23 @@ export function LenderDashboard() {
                       </td>
                       <td className="space-y-3 px-5 py-5 align-top">
                         <StatusBadge tone={application.applicationStatus} />
-                        <p className="max-w-xs text-sm leading-6 text-slate-600">
+                        <p className="max-w-xs text-sm leading-6 text-slate-500">
                           {application.summary}
                         </p>
                       </td>
-                      <td className="px-5 py-5 align-top text-sm text-slate-700">
+                      <td className="px-5 py-5 align-top text-sm text-slate-600">
                         {application.modelVersion}
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           </section>
         </>
       ) : (
-        <div className="rounded-[28px] border border-slate-200 bg-white p-6 text-sm text-slate-600 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+        <div className="rounded-[28px] border border-sky-100 bg-white p-6 text-sm text-slate-500 shadow-[var(--shadow)]">
           Loading queue and portfolio metrics...
         </div>
       )}

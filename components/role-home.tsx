@@ -19,8 +19,8 @@ export function RoleHome() {
 
   if (isLoading || !profile) {
     return (
-      <main className="min-h-screen bg-slate-50 px-6 py-10">
-        <div className="mx-auto max-w-4xl rounded-[32px] border border-slate-200 bg-white p-10 text-sm text-slate-600 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+      <main className="min-h-screen px-6 py-10">
+        <div className="mx-auto max-w-4xl rounded-[32px] border border-slate-200 bg-white p-10 text-sm text-slate-600 shadow-[var(--shadow)] dark:border-slate-800 dark:bg-slate-950/70 dark:text-slate-300">
           Loading workspace...
         </div>
       </main>

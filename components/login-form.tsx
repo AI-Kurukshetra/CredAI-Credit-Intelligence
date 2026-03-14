@@ -58,13 +58,27 @@ export function LoginForm() {
   };
 
   return (
-    <div className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
-      <div className="flex gap-3">
+    <div className="rounded-[36px] border border-sky-100 bg-white p-8 shadow-[var(--shadow)] backdrop-blur">
+      <div className="mb-8 flex items-center justify-between gap-4">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-700">
+            Secure access
+          </p>
+          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+            {mode === "signup" ? "Create borrower account" : "Sign in to CredAI"}
+          </h2>
+        </div>
+        <span className="rounded-full border border-sky-100 bg-[linear-gradient(180deg,#ffffff_0%,#f9fcff_100%)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-600">
+          {mode === "signup" ? "Borrower" : "Portal"}
+        </span>
+      </div>
+
+      <div className="flex flex-wrap gap-3">
         <button
-          className={`rounded-full px-4 py-2 text-sm font-semibold ${
+          className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
             mode === "signin"
               ? "bg-slate-950 text-white"
-              : "bg-slate-100 text-slate-700"
+              : "border border-sky-100 bg-white text-slate-600"
           }`}
           onClick={() => setMode("signin")}
           type="button"
@@ -72,10 +86,10 @@ export function LoginForm() {
           Sign in
         </button>
         <button
-          className={`rounded-full px-4 py-2 text-sm font-semibold ${
+          className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
             mode === "signup"
               ? "bg-slate-950 text-white"
-              : "bg-slate-100 text-slate-700"
+              : "border border-sky-100 bg-white text-slate-600"
           }`}
           onClick={() => setMode("signup")}
           type="button"
@@ -98,7 +112,7 @@ export function LoginForm() {
       </div>
 
       <button
-        className="mt-6 w-full rounded-full bg-sky-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-sky-300 disabled:bg-slate-300"
+        className="mt-6 w-full rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:bg-slate-300"
         disabled={isPending}
         onClick={handleSubmit}
         type="button"
@@ -112,17 +126,22 @@ export function LoginForm() {
 
       {error ? <p className="mt-4 text-sm text-rose-700">{error}</p> : null}
 
-      <div className="mt-6 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-600">
-        Lender access uses the same sign-in form, but lender users should be created in Supabase Auth and assigned the `lender` role in `profiles`.
+      <div className="mt-6 rounded-[28px] border border-sky-100 bg-[linear-gradient(180deg,#ffffff_0%,#f9fcff_100%)] p-5 text-sm leading-6 text-slate-500">
+        {mode === "signup"
+          ? "Borrower accounts use email and password sign-up. After confirmation, applicants can start a loan request and upload supporting documents."
+          : "Lender accounts use the same secure sign-in. Lender users should exist in Supabase Auth and carry the lender role in profiles."}
       </div>
 
-      <p className="mt-4 text-sm text-slate-500">
-        After sign in, borrowers can use{" "}
-        <Link className="font-semibold text-slate-900" href="/apply">
-          /apply
-        </Link>{" "}
-        and lenders use the main dashboard.
-      </p>
+      <div className="mt-5 flex flex-wrap items-center gap-3 text-sm text-slate-400">
+        <span>Borrowers land in the intake workspace.</span>
+        <span className="hidden h-1 w-1 rounded-full bg-sky-100 sm:block" />
+        <Link
+          className="font-semibold text-slate-900"
+          href="/apply"
+        >
+          Open borrower flow
+        </Link>
+      </div>
     </div>
   );
 }
@@ -139,10 +158,10 @@ function Field({
   type?: string;
 }) {
   return (
-    <label className="grid gap-2 text-sm font-medium text-slate-700">
+    <label className="grid gap-2 text-sm font-medium text-slate-600">
       <span>{label}</span>
       <input
-        className="rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-slate-950"
+        className="rounded-2xl border border-sky-100 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-sky-300"
         onChange={(event) => onChange(event.target.value)}
         type={type}
         value={value}

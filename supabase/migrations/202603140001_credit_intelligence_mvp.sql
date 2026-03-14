@@ -77,6 +77,12 @@ create table if not exists public.borrowers (
   first_name text not null,
   last_name text not null,
   phone text,
+  date_of_birth date,
+  address_line_1 text,
+  address_line_2 text,
+  city text,
+  state text,
+  postal_code text,
   consent_captured boolean not null default false,
   created_at timestamptz not null default now()
 );
@@ -94,7 +100,16 @@ create table if not exists public.loan_applications (
   id uuid primary key default gen_random_uuid(),
   borrower_id uuid not null references public.borrowers(id) on delete cascade,
   requested_amount numeric(12,2) not null,
+  loan_purpose text,
+  loan_term_months integer,
+  product_type text,
+  employer_name text,
+  employment_type text,
+  job_title text,
   annual_income numeric(12,2) not null,
+  monthly_net_income numeric(12,2),
+  secondary_income numeric(12,2) not null default 0,
+  pay_frequency text,
   existing_monthly_debt numeric(12,2) not null,
   monthly_housing_payment numeric(12,2) not null,
   employment_years numeric(6,2) not null,
@@ -224,6 +239,25 @@ on conflict (id) do update
 set
   full_name = excluded.full_name,
   role = excluded.role;
+
+alter table public.borrowers
+  add column if not exists date_of_birth date,
+  add column if not exists address_line_1 text,
+  add column if not exists address_line_2 text,
+  add column if not exists city text,
+  add column if not exists state text,
+  add column if not exists postal_code text;
+
+alter table public.loan_applications
+  add column if not exists loan_purpose text,
+  add column if not exists loan_term_months integer,
+  add column if not exists product_type text,
+  add column if not exists employer_name text,
+  add column if not exists employment_type text,
+  add column if not exists job_title text,
+  add column if not exists monthly_net_income numeric(12,2),
+  add column if not exists secondary_income numeric(12,2) not null default 0,
+  add column if not exists pay_frequency text;
 
 insert into public.score_models (name, version, is_active, config)
 values (
